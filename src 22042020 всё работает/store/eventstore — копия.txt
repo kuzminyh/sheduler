@@ -1,0 +1,86 @@
+export default {
+    state: {
+      currentDate: '',
+      allEvents: '',
+      eventsCurrentDate: ''
+    },
+    mutations: {
+        writeAllevents (state, payload) {
+        state.allEvents = payload
+      },
+       currentDate (state , payload ){
+         state.currentDate = payload
+       },
+       eventsCurrentDate(state , payload ){
+         state.eventsCurrentDate = payload
+       },
+
+     /* setError (state, payload) {
+        state.error = payload
+      },
+      clearError (state) {
+        state.error = null
+      }*/
+    },
+    actions: {
+      writeAllevents ({commit}, payload) {
+        commit('writeAllevents', payload)
+      },
+      currentDate({commit}, payload) {
+       commit('currentDate', payload)
+          
+      },
+      eventsCurrentDate({commit}, payload) {
+         commit('eventsCurrentDate', payload)  
+      },
+     copyFromCurrentDateToAllEvents({commit,getters}) {
+      
+        const min = new Date(`${getters.currentDate}T00:00:00Z`);
+        const max = new Date(`${getters.currentDate}T23:59:59Z`);
+
+        var dateCurrent = new Date(getters.currentDate) 
+
+        
+        var meventsCurrentDate = getters.eventsCurrentDate
+        var eventsAll = getters.allEvents  
+        console.log('dateCurrent',dateCurrent) // eslint-disable-line
+        console.log('max',max) // eslint-disable-line
+         console.log('meventsCurrentDate',meventsCurrentDate ) // eslint-disable-line
+        var newEventsAll = eventsAll.filter(function(number){
+            console.log('number.start',new Date(number.start )) // eslint-disable-line
+            console.log('number1.start', new Date(number.start ) < dateCurrent  ) // eslint-disable-line
+            return new Date(number.start ) < dateCurrent | new Date(number.start) > max 
+             
+        },dateCurrent , max, min)
+         console.log('newEventsAll',newEventsAll ) // eslint-disable-line
+        for(var i=0; i<meventsCurrentDate.length-1;i++){
+            newEventsAll.push(meventsCurrentDate[i])
+        }
+        
+        commit('writeAllevents',newEventsAll)
+        
+      }    
+      
+
+   /*   setError ({commit}, payload) {
+        commit('setError', payload)
+      },
+      clearError ({commit}) {
+        commit('clearError')
+      }*/
+    },
+    getters: {
+      allEvents (state) {
+        return state.allEvents
+      },
+      eventsCurrentDate (state) {
+        return state.eventsCurrentDate
+      },
+      currentDate (state) {
+        return state.currentDate
+      },
+     /* error (state) {
+        return state.error
+      }*/
+    }
+  }

@@ -1,0 +1,172 @@
+<template>
+  <v-container
+        class="fill-height"
+        fluid
+      >
+        <v-row
+          align="center"
+          justify="center"
+        >
+          <v-col
+            cols="12"
+            sm="8"
+            md="6"
+          >
+            <v-card class="elevation-12">
+              <v-toolbar
+                color="primary"
+                dark
+                flat
+              >
+                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-spacer />
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      :href="source"
+                      icon
+                      large
+                      target="_blank"
+                      v-on="on"
+                    >
+                      <v-icon>mdi-code-tags</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Source</span>
+                </v-tooltip>
+                <v-tooltip right>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      icon
+                      large
+                      href="https://codepen.io/johnjleider/pen/pMvGQO"
+                      target="_blank"
+                      v-on="on"
+                    >
+                      <v-icon>mdi-codepen</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Codepen</span>
+                </v-tooltip>
+              </v-toolbar>
+              <v-card-text>
+                <v-form>
+                  <v-text-field
+                    label="Login"
+                    name="login"
+                    prepend-icon="person"
+                    type="text"
+                  />
+
+                  <v-text-field
+                    id="password"
+                    label="Password"
+                    name="password"
+                    prepend-icon="lock"
+                    type="password"
+                  />
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer />
+                <v-btn color="primary">Login</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+</template>
+
+<script>
+  const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
+ //import infoAboutSendEmail from './InfoAboutSendEmail.vue'
+ //*import ChangePassword from '../Auth/ChangePassword.vue'
+
+
+/*const comp1 = {
+    template: `
+    <div> <div> 
+     <input v-model="item" type="email" class="form-control" placeholder="Email Address"/>
+     </div> 
+     <div> 
+     <button class="btn btn-primary btn-lg" @click.prevent="pressed(item)">Press Button 1</button>
+     </div> </div>
+    `
+   
+}*/
+
+
+  export default {
+    data () {
+      return {
+        show: false,
+        email: '',
+        password: '',
+        valid: false,
+        emailRules: [
+          v => !!v || 'E-mail is required',
+          v => emailRegex.test(v) || 'E-mail must be valid'
+        ],
+        passwordRules: [
+          v => !!v || 'Password is required',
+          v => (v && v.length >= 6) || 'Password must be equal or more than 6 characters'
+        ]
+      }
+    },
+    components:{
+      /*myInfoAboutSendEmail : infoAboutSendEmail,
+      myChangePassword : ChangePassword,
+      myComp1 : comp1*/
+    },
+    computed: {
+      loading () {
+        return this.$store.getters.loading
+      }
+    },
+    methods: {
+      onSubmit () {
+        if (this.$refs.form.validate()) {
+          const user = {
+            email: this.email,
+            password: this.password
+          }
+
+          this.$store.dispatch('loginUser', user)
+            .then(() => {
+              this.$router.push('/')
+            })
+            .catch(() => {})
+        }
+      },
+      onSubmitLinkEmail () {
+        if (this.$refs.form.validate()) {
+          const user = {
+            email: this.email,
+            password: this.password
+          }
+
+          this.$store.dispatch('sendEmailLinkForgotPassword', user)
+            .then(() => {
+              this.show = true
+              this.$router.push('/login')
+            })
+            .catch(() => {})
+        }
+      },
+      /*loginOnLinkEmail()  {
+        this.$store.dispatch('loginOnLinkEmailForgotPassword')
+        .then(()=>{
+
+        })
+        .catch(()=>{
+
+        })
+      }*/
+    },
+    created () {
+      if (this.$route.query['loginError']) {
+        this.$store.dispatch('setError', 'Please log in to access this page.')
+      }
+    }
+  }
+</script>
